@@ -266,12 +266,13 @@ if __name__ == "__main__":
     wvl = np.linspace(min(specdata[:,0]),max(specdata[:,0]),301)
     eyeinterp = eye_sensitivity()
     plt.figure(1)
+    plt.subplot(121)
     plt.plot(specdata[:,0],specdata[:,1],'.-',label='Emission spectrum')
     plt.plot(wvl,eyeinterp(wvl),'-',label='Eye sensitivity')
     plt.fill_between(specdata[:,0],specdata[:,1]*eyeinterp(specdata[:,0]),
                      color='gray',label='Integrated area')
-    plt.legend(loc='upper right')
-    plt.title('Result: %.2f mW --> %.2f lm' %(mW, lm))
+    plt.legend(loc='upper left')
+    plt.title('%.2f mW --> %.2f lm' %(mW, lm))
     plt.ylabel('Normalized spectrum')
     plt.xlabel('Wavelength (nm)')
 
@@ -283,11 +284,11 @@ if __name__ == "__main__":
     cd = lm2cd(lm, beamdata)
 
     # Plot
-    plt.figure(2)
+    plt.subplot(122)
     plt.plot(beamdata[:,0]*180/np.pi,beamdata[:,1],'.-',label='Beam profile')
     plt.fill_between(beamdata[:,0]*180/np.pi,beamdata[:,1]*np.sin(beamdata[:,0]),
                      color='gray',label='Integrated area')
-    plt.title('Result: %.2f lm --> %.2f cd' %(lm, cd))
+    plt.title('%.2f lm --> %.2f cd' %(lm, cd))
     plt.legend(loc='upper right')
     plt.ylabel('Relative lumimous intensity')
     plt.xlabel('Angle (degree)')
