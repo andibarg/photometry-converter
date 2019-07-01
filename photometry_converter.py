@@ -216,6 +216,39 @@ def simple_cd2lm(cd, apexangle=120):
     return cd*effomg
 
 
+'''
+Class object for light source.
+'''
+class source:
+    def __init__(self, **kwargs):
+        # Create class attributes
+        self.__dict__.update(kwargs)
+
+    # Transfer conversion functions
+    def lm2mW(self):
+        self.mW = lm2mW(lm=self.lm, specdata=self.specdata)
+        return self.mW
+
+    def mW2lm(self):
+        self.lm = mW2lm(mW=self.mW, specdata=self.specdata)
+        return self.lm
+
+    def cd2lm(self):
+        try:
+            self.lm = cd2lm(cd=self.cd, angledata=self.angledata)
+        except:
+            self.lm = simple_cd2lm(cd=self.cd, apexangle=self.apexangle)
+        return self.lm
+
+    def lm2cd(self):
+        try:
+            self.cd = lm2cd(lm=self.lm, angledata=self.angledata)
+        except:
+            self.cd = simple_lm2cd(lm=self.lm, apexangle=self.apexangle)
+        return self.cd
+
+
+
 
 ##########################################################
 if __name__ == "__main__":
