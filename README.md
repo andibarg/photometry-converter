@@ -20,9 +20,9 @@ beamdata = pc.lambert()
 lm = mW2lm(mW = 827, specdata)
 
 # Find luminous intensity
-cd = lm2cd(lm, angledata)
+cd = lm2cd(lm, beamdata)
 ```
-Alternatively, you can create a class instance as follows:
+Alternatively, you can create a class instance. In the following example the beam profile is specified via the apexangle:
 ```
 import photometry_converter as pc
 
