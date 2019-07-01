@@ -12,15 +12,18 @@ The following example code converts from milliwatt to lumen to candela. The spec
 ```
 import photometry_converter as pc
 
+# Radiant flux in milliwatt
+mW = 827
+
 # Emission spectrum and profile
 specdata = pc.gauss_emission(cwvl=457,sbw=27)
 beamdata = pc.lambert()
 
 # Find luminous flux
-lm = mW2lm(mW = 827, specdata)
+lm = pc.mW2lm(mW, specdata)
 
 # Find luminous intensity
-cd = lm2cd(lm, beamdata)
+cd = pc.lm2cd(lm, beamdata)
 ```
 Alternatively, you can create a class instance. In the following example the beam profile is specified via the apexangle:
 ```
