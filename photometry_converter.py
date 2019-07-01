@@ -55,7 +55,7 @@ cwvl: center wavelength in nm
 SBW: spectral bandwidth in nm
 N: number of samples
 '''
-def gaus_emission(cwvl, sbw=20, N=201):
+def gauss_emission(cwvl, sbw=20, N=201):
     # Wavelength array
     wvl = np.linspace(cwvl-6*sbw/2,cwvl+6*sbw/2,N)
 
@@ -64,6 +64,16 @@ def gaus_emission(cwvl, sbw=20, N=201):
 
     # Calculate gaussian function and return
     return np.column_stack([wvl, np.exp(-(wvl-cwvl)**2/(2*sigma**2))])
+
+'''
+Lambert's cosine radiation (e.g. approx for LEDs w/o dome)
+'''
+def lambert():
+    # Angle array in rad
+    angle = np.linspace(0,np.pi/2,51)
+
+    # Calcualte cosine and return
+    return np.column_stack([angle, np.cos(angle)])
 
 
 '''
@@ -129,21 +139,21 @@ to luminous flux (in lm). Returns value in lumen.
 
 Inputs
 cd: maximum luminous intensity in candela
-angledata: Data of normalized luminous intensity vs
-polar angle (0 <= theta <= pi), where angledata[:,0] is
-the angle and angledata[:,1] the normalized luminous intensity
+beamdata: Data of normalized luminous intensity vs
+polar angle (0 <= theta <= pi), where beamdata[:,0] is
+the angle and beamdata[:,1] the normalized luminous intensity
 (in a.u.).
 '''
-def cd2lm(cd, angledata):
+def cd2lm(cd, beamdata):
     # Convert intensity data to numpy array
-    angledata = np.array(angledata)
+    beamdata = np.array(beamdata)
     
     # Normalize intensity data
-    angledata[:,1] /= max(angledata[:,1])
+    beamdata[:,1] /= max(beamdata[:,1])
 
     # Calculate equivalent solid angle
-    effomg = 2*np.pi*np.trapz(angledata[:,1]*np.sin(angledata[:,0]),
-                          angledata[:,0])
+    effomg = 2*np.pi*np.trapz(beamdata[:,1]*np.sin(beamdata[:,0]),
+                          beamdata[:,0])
 
     # Calculate luminous flux and return
     return effomg*cd
@@ -154,21 +164,21 @@ to luminous intensity (in cd). Returns value in candela.
 
 Inputs
 lm: luminous flux in lumen.
-angledata: Data of normalized luminous intensity vs
-polar angle (0 <= theta <= pi), where angledata[:,0] is
-the angle and angledata[:,1] the normalized luminous intensity
+beamdata: Data of normalized luminous intensity vs
+polar angle (0 <= theta <= pi), where beamdata[:,0] is
+the angle and beamdata[:,1] the normalized luminous intensity
 (in a.u.).
 '''
-def lm2cd(lm, angledata):
+def lm2cd(lm, beamdata):
     # Convert intensity data to numpy array
-    angledata = np.array(angledata)
+    beamdata = np.array(beamdata)
     
     # Normalize intensity data
-    angledata[:,1] /= max(angledata[:,1])
+    beamdata[:,1] /= max(beamdata[:,1])
 
     # Calculate equivalent solid angle
-    effomg = 2*np.pi*np.trapz(angledata[:,1]*np.sin(angledata[:,0]),
-                          angledata[:,0])
+    effomg = 2*np.pi*np.trapz(beamdata[:,1]*np.sin(beamdata[:,0]),
+                          beamdata[:,0])
 
     # Calculate luminous intensity and return
     return lm/effomg
@@ -205,16 +215,6 @@ def simple_cd2lm(cd, apexangle=120):
     # Calculate luminous flux and return
     return cd*effomg
 
-'''
-Lambert's cosine radiation (e.g. approx for LEDs w/o dome)
-'''
-def lambert():
-    # Angle array in rad
-    angle = np.linspace(0,np.pi/2,51)
-
-    # Calcualte cosine and return
-    return np.column_stack([angle, np.cos(angle)])
-
 
 
 ##########################################################
@@ -224,7 +224,7 @@ if __name__ == "__main__":
 
     # Emission spectrum
     # specdata = np.loadtxt('filename.csv', skiprows = 1,delimiter=',')
-    specdata = gaus_emission(cwvl=457,sbw=27)
+    specdata = gauss_emission(cwvl=457,sbw=27)
 
     # Find luminous flux
     lm = mW2lm(mW, specdata)
@@ -232,6 +232,7 @@ if __name__ == "__main__":
     # Plot
     wvl = np.linspace(min(specdata[:,0]),max(specdata[:,0]),301)
     eyeinterp = eye_sensitivity()
+    plt.figure(1)
     plt.plot(specdata[:,0],specdata[:,1],'.-',label='Emission spectrum')
     plt.plot(wvl,eyeinterp(wvl),'-',label='Eye sensitivity')
     plt.fill_between(specdata[:,0],specdata[:,1]*eyeinterp(specdata[:,0]),
@@ -240,18 +241,18 @@ if __name__ == "__main__":
     plt.title('Result: %.2f mW --> %.2f lm' %(mW, lm))
     plt.ylabel('Normalized spectrum')
     plt.xlabel('Wavelength (nm)')
-    plt.show()
 
     # Normalized luminous intensity vs polar angle
-    # angledata = np.loadtxt(anglepath, skiprows = 1,delimiter=',')
-    angledata = lambert()
+    # beamdata = np.loadtxt(anglepath, skiprows = 1,delimiter=',')
+    beamdata = lambert()
 
     # Find luminous intensity
-    cd = lm2cd(lm, angledata)
+    cd = lm2cd(lm, beamdata)
 
     # Plot
-    plt.plot(angledata[:,0]*180/np.pi,angledata[:,1],'.-',label='Radiation characteristic')
-    plt.fill_between(angledata[:,0]*180/np.pi,angledata[:,1]*np.sin(angledata[:,0]),
+    plt.figure(2)
+    plt.plot(beamdata[:,0]*180/np.pi,beamdata[:,1],'.-',label='Radiation characteristic')
+    plt.fill_between(beamdata[:,0]*180/np.pi,beamdata[:,1]*np.sin(beamdata[:,0]),
                      color='gray',label='Integrated area')
     plt.title('Result: %.2f lm --> %.2f cd' %(lm, cd))
     plt.legend(loc='upper right')
