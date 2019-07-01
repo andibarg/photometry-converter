@@ -34,3 +34,4 @@ led.lm
 led.cd
 ```
 The example conversion above may be complemented by the following figures, which show the emission spectrum and the beam profile of the light source:
+![Screenshot](example_conversion.png)
