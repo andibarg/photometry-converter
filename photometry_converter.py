@@ -284,7 +284,7 @@ if __name__ == "__main__":
 
     # Plot
     plt.figure(2)
-    plt.plot(beamdata[:,0]*180/np.pi,beamdata[:,1],'.-',label='Radiation characteristic')
+    plt.plot(beamdata[:,0]*180/np.pi,beamdata[:,1],'.-',label='Beam profile')
     plt.fill_between(beamdata[:,0]*180/np.pi,beamdata[:,1]*np.sin(beamdata[:,0]),
                      color='gray',label='Integrated area')
     plt.title('Result: %.2f lm --> %.2f cd' %(lm, cd))
