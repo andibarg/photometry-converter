@@ -31,4 +31,10 @@ led = pc.source(name = 'Blue LED',
                 mW = 827,
                 specdata = pc.gauss_emission(cwvl=457,sbw=27),
                 apexangle = 120)
+
+# Find luminous flux
+lm = led.mW2lm()
+
+# Find luminous intensity
+cd = led.lm2cd()
 ```
