@@ -1,5 +1,5 @@
 # photometry-converter
-Converts between photometric and radiometric units. Supports luminous intensity (in candela), lumious flux (in lumen) and radiant flux/optical power (in milliwatt). Takes into account the spectral emission and beam profile of a light source.
+Converts between photometric and radiometric units. Supports luminous intensity (in candela), lumious flux (in lumen) and radiant flux/optical power (in milliwatt). Takes into account the spectral emission and beam profile of a light source. See [labsphere technical guide](https://www.labsphere.com/site/assets/files/2570/the-radiometry-of-light-emitting-diodes-leds.pdf) for details about the theory.
 
 ### Installation
 ```
@@ -33,3 +33,4 @@ led.lm2cd()
 led.lm
 led.cd
 ```
+The example conversion above may be complemented by the following figures, which show the emission spectrum and the beam profile of the light source:
