@@ -134,6 +134,42 @@ def mW2lm(mW, specdata):
     return lm
 
 '''
+Convert power in mW to photodetector signal. Unit
+of returned value depends on definition of responsivity.
+
+Inputs
+mW: optical power in milliwatt.
+specdata: spectral distribution of light source as array
+    where specdata[:,0] is the wavelength and specdata[:,1] the
+    spectral flux (in a.u.)
+respdata: Sensitivity of photodetector where respdata[:,0] is
+    the wavelength and respdata[:,1] is the responsivity. The
+    latter may be in units of V/W or A/W
+'''
+def mW2signal(mW, specdata, respdata):
+    # Convert spectrum data to numpy array
+    specdata = np.array(specdata)
+    
+    # Normalize spectrum data
+    specdata[:,1] /= max(specdata[:,1])
+
+    # Convert to spectral flux/power (W/nm)
+    fac = 1e-3*mW/np.trapz(specdata[:,1], specdata[:,0])
+    SF = specdata[:,1]*fac
+
+    # Interpolate responsivity
+    respinterp = interp1d(respdata[:,0],respdata[:,1],
+                      kind='cubic',
+                      bounds_error=False,
+                      fill_value = (0,0))
+
+    # Integrate product of spetra and convert to signal
+    product = SF*respinterp(specdata[:,0])
+    signal = np.trapz(product, specdata[:,0])
+
+    return signal
+
+'''
 Convert from luminous intensity (in cd)
 to luminous flux (in lm). Returns value in lumen.
 
